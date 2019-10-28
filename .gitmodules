@@ -1,0 +1,6 @@
+[submodule "xfinal"]
+	path = xfinal
+	url = https://github.com/xmh0511/xfinal.git
+[submodule "xorm"]
+	path = xorm
+	url = https://github.com/xmh0511/xorm.git
