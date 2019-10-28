@@ -1,8 +1,8 @@
 # xmart
 
 ## 特性
-1. 易于使用的web库 (xfinal)  
-2. 易于使用的orm库 (xorm)  
+1. 易于使用的web库 (xfinal) [基本使用](https://github.com/xmh0511/xfinal)  
+2. 易于使用的orm库 (xorm) [基本使用](https://github.com/xmh0511/xorm)    
 3. 完整的处理工具  (utils)  
 
 ## 演示
