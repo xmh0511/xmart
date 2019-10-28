@@ -1,5 +1,8 @@
 # xmart
 
+## 环境  
+只需要支持c++14的编译器  
+
 ## 特性
 1. 易于使用的web库 (xfinal) [基本使用](https://github.com/xmh0511/xfinal)  
 2. 易于使用的orm库 (xorm) [基本使用](https://github.com/xmh0511/xorm)    
