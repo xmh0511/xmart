@@ -1,0 +1,7 @@
+/mnt/d/xmart/lbuild/CMakeFiles/install/strip.dir
+/mnt/d/xmart/lbuild/CMakeFiles/edit_cache.dir
+/mnt/d/xmart/lbuild/CMakeFiles/xmart.dir
+/mnt/d/xmart/lbuild/CMakeFiles/rebuild_cache.dir
+/mnt/d/xmart/lbuild/CMakeFiles/list_install_components.dir
+/mnt/d/xmart/lbuild/CMakeFiles/install/local.dir
+/mnt/d/xmart/lbuild/CMakeFiles/install.dir

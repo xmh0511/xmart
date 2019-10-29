@@ -16,6 +16,7 @@ int main() {
 	bool r = false;
 	http_server& server = init_xmart("./config.json", r);
 	if (!r) {
+		std::cout<<"config has some error"<<std::endl;
 		return 0;
 	}
 
