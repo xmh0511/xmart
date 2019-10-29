@@ -49,6 +49,15 @@ int main() {
 		dao.insert(data);
 		res.write_string("hello,world");
 	});
+	//从提交的json写入数据库
+	server.router<GET, POST>("/writejson", [](request& req, response& res) {
+		auto json_str = req.body();
+		auto json = json::parse(json_str);
+		auto data = map_from_json<test>(json);
+		dao_t<mysql> dao;
+		dao.insert(data);
+		res.write_string("json insert");
+	});
 
         //获取数据并通过json数据交互返回给客户端
 	server.router<GET>("/list", [](request& req, response& res) {
