@@ -3,10 +3,12 @@
 ## 环境  
 只需要支持c++14的编译器  
 
+
 ## 特性
-1. 易于使用的web库 (xfinal) [基本使用](https://github.com/xmh0511/xfinal)  
-2. 易于使用的orm库 (xorm) [基本使用](https://github.com/xmh0511/xorm)    
-3. 完整的处理工具  (utils)  
+1. 跨平台支持
+2. 易于使用的web库 (xfinal) [基本使用](https://github.com/xmh0511/xfinal)  
+3. 易于使用的orm库 (xorm) [基本使用](https://github.com/xmh0511/xorm)    
+4. 完整的处理工具  (utils)  
 
 ## 演示
 
