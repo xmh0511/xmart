@@ -11,11 +11,6 @@ namespace xmart {
 	}
 
 	template<typename T>
-	std::enable_if_t<std::is_same<long, T>::value, T> str_to_fundamention(nonstd::string_view str) {
-		return std::atol(str.data());
-	}
-
-	template<typename T>
 	std::enable_if_t<std::is_same<std::int64_t, T>::value, T> str_to_fundamention(nonstd::string_view str) {
 		return std::atoll(str.data());
 	}
