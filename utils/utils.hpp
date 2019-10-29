@@ -62,5 +62,15 @@ namespace xmart {
 		return tmp;
 	}
 
+	template<typename T>
+	std::enable_if_t<reflector::is_reflect_class<T>::value, T> map_from_json(nlohmann::json const& json ) {
+		T tmp{};
+		serializer::to_object(tmp, json);
+		return tmp;
+	}
 
+	template<typename T>
+	std::enable_if_t<reflector::is_reflect_class<typename std::remove_reference<T>::type>::value, nlohmann::json> map_to_json(T&& obj) {
+		return serializer::to_json(std::forward<T>(obj));
+	}
 }

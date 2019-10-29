@@ -24,14 +24,23 @@ int main() {
 		auto data = map_from_query<test>(req);
 		dao_t<mysql> dao;
 		dao.insert(data);
-		res.write_string("hello,world");
+		res.write_string("form insert");
 	});
 
 	server.router<GET, POST>("/writeparams", [](request& req, response& res) {
 		auto data = map_from_params<test>(req);
 		dao_t<mysql> dao;
 		dao.insert(data);
-		res.write_string("hello,world");
+		res.write_string("params insert");
+	});
+
+	server.router<GET, POST>("/writejson", [](request& req, response& res) {
+		auto json_str = req.body();
+		auto json = json::parse(json_str);
+		auto data = map_from_json<test>(json);
+		dao_t<mysql> dao;
+		dao.insert(data);
+		res.write_string("json insert");
 	});
 
 	server.router<GET>("/list", [](request& req, response& res) {
@@ -41,7 +50,7 @@ int main() {
 		if (pr.first) {
 			auto& vec = pr.second;
 			for (auto& iter : vec) {
-				root["list"].push_back(serializer::to_json(iter));
+				root["list"].push_back(map_to_json(iter));
 			}
 		}
 		root["success"] = true;
