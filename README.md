@@ -77,3 +77,11 @@ int main() {
 	server.run();
 }
 ````
+
+
+# Donation
+
+### alipay:  
+![image](https://github.com/xmh0511/donation/blob/master/alipay.png)  
+### wechat:  
+![image](https://github.com/xmh0511/donation/blob/master/wechat.png)  
