@@ -31,6 +31,9 @@ namespace xmart {
 				config.user = config_json.at("db_user").get<std::string>();
 				init_database_config(config);
 				orm_result = true;
+#ifdef  XMART_ENABLE_MYSQL
+				auto& pool = dao_t<xorm::mysql>::get_conn_pool();
+#endif 
 #endif 
 			}
 			catch (std::exception const& ec) {
