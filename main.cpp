@@ -20,6 +20,10 @@ int main() {
 		return 0;
 	}
 
+	server.on_error([](std::string const& ec) {
+		std::cout << ec << std::endl;
+	});
+
 	server.router<GET, POST>("/write", [](request& req, response& res) {
 		auto data = map_from_query<test>(req);
 		dao_t<mysql> dao;

@@ -57,6 +57,14 @@ namespace xmart {
 			server.listen(host, port);
 		}
 		r = config_result && orm_result;
+#ifdef _ENABLE_XORM_
+		if (r) {
+			dao_message::get().set_error_callback([](std::string const& message) {
+				server.trigger_error(message);
+			});
+		}
+#endif // #ifdef _ENABLE_XORM_
+
 		return server;
 	}
 
