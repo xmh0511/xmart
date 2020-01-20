@@ -41,9 +41,14 @@ int main() {
 	server.router<GET, POST>("/writejson", [](request& req, response& res) {
 		auto json_str = req.body();
 		auto json = json::parse(json_str);
-		auto data = map_from_json<test>(json);
-		dao_t<mysql> dao;
-		dao.insert(data);
+		try {
+			auto data = map_from_json<test>(json);
+			dao_t<mysql> dao;
+			dao.insert(data);
+		}
+		catch (std::exception const& ec) {
+			std::cout << ec.what() << std::endl;
+		}
 		res.write_string("json insert");
 	});
 
@@ -53,9 +58,7 @@ int main() {
 		json root;
 		if (pr.first) {
 			auto& vec = pr.second;
-			for (auto& iter : vec) {
-				root["list"].push_back(map_to_json(iter));
-			}
+			root["list"] = list_to_json(vec);
 		}
 		root["success"] = true;
 		res.write_json(root);

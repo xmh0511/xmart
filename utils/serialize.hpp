@@ -8,40 +8,69 @@ namespace xmart {
 #endif 
 namespace xmart {
 	namespace serializer {
-		template<typename T, typename U = std::enable_if_t<reflector::is_reflect_class<std::remove_reference_t<T>>::value>>
+		template<typename T, typename U = typename std::enable_if<reflector::is_reflect_class<typename std::remove_reference<T>::type>::value>::type>
 		inline nlohmann::json to_json(T && obj, nlohmann::json & json);
-		template<typename T, typename U = std::enable_if_t<reflector::is_reflect_class<std::remove_reference_t<T>>::value>>
+		template<typename T, typename U = typename std::enable_if<reflector::is_reflect_class<typename std::remove_reference<T>::type>::value>::type>
 		inline nlohmann::json to_json(T && obj);
 
-		template<typename T, typename U = std::enable_if_t<reflector::is_reflect_class<std::remove_reference_t<T>>::value>>
-		inline std::remove_reference_t<T> to_object(T && t, nlohmann::json const& json);
-		template<typename T, typename U = std::enable_if_t<reflector::is_reflect_class<std::remove_reference_t<T>>::value>>
-		inline std::remove_reference_t<T> to_object(nlohmann::json const& json);
+		template<typename T, typename U = typename std::enable_if<reflector::is_reflect_class<typename std::remove_reference<T>::type>::value>::type>
+		inline typename std::remove_reference<T>::type to_object(T && t, nlohmann::json const& json);
+		template<typename T, typename U = typename std::enable_if<reflector::is_reflect_class<typename std::remove_reference<T>::type>::value>::type>
+		inline typename std::remove_reference<T>::type to_object(nlohmann::json const& json);
 	}
+	template<typename Class>
+	struct each_auto_params_lambda_to_json_v {
+		each_auto_params_lambda_to_json_v(nlohmann::json& json_):json(json_){
+
+		}
+		template<typename T,typename U,typename Y>
+		void operator()(T&& t, U&& name, Y&& offset) {
+			Class::to_json_v((t.*offset), name, json);
+		}
+	private:
+		nlohmann::json& json;
+	};
+	template<typename Class>
+	struct each_auto_params_lambda_to_object_v {
+		each_auto_params_lambda_to_object_v(nlohmann::json const& json_):json(json_) {
+
+		}
+		template<typename T, typename U, typename Y>
+		void operator()(T&& t, U&& name, Y&& offset) {
+			Class::to_object_v((t.*offset), json[name]);
+		}
+	private:
+		nlohmann::json const& json;
+	};
 	class serialize_ {
 		template<typename T, typename U>
 		friend nlohmann::json serializer::to_json(T&& obj, nlohmann::json& json);
 		template<typename T, typename U>
 		friend nlohmann::json serializer::to_json(T&& obj);
 		template<typename T, typename U>
-		friend std::remove_reference_t<T> serializer::to_object(T&& t, nlohmann::json const& json);
+		friend typename std::remove_reference<T>::type serializer::to_object(T&& t, nlohmann::json const& json);
 		template<typename T, typename U>
-		friend std::remove_reference_t<T> serializer::to_object(nlohmann::json const& json);
+		friend typename std::remove_reference<T>::type serializer::to_object(nlohmann::json const& json);
+
+		template<typename Class>
+		friend struct each_auto_params_lambda_to_json_v;
+		template<typename Class>
+		friend struct each_auto_params_lambda_to_object_v;
 	private:
 		template<typename T>
-		static std::enable_if_t<reflector::is_reflect_class<std::remove_reference_t<T>>::value> to_json_v(T&& obj, std::string const& name, nlohmann::json& json)
+		static typename std::enable_if<reflector::is_reflect_class<typename std::remove_reference<T>::type>::value>::type to_json_v(T&& obj, std::string const& name, nlohmann::json& json)
 		{
 			json[name] = nlohmann::json::object();
 			to_json(obj, json[name]);
 		}
 #ifdef _ENABLE_XORM_
 		template<typename T>
-		static std::enable_if_t<!reflector::is_reflect_class<std::remove_reference_t<T>>::value && (!xmart::is_fundamention_type<typename std::remove_reference<T>::type>::value && !xmart::is_date_type<typename std::remove_reference<T>::type>::value)> to_json_v(T&& obj, std::string const& name, nlohmann::json& json)
+		static typename std::enable_if<!reflector::is_reflect_class<typename std::remove_reference<T>::type>::value && (!xmart::is_fundamention_type<typename std::remove_reference<T>::type>::value && !xmart::is_date_type<typename std::remove_reference<T>::type>::value)>::type to_json_v(T&& obj, std::string const& name, nlohmann::json& json)
 		{
 			json[name] = obj;
 		}
 		template<typename T>
-		static std::enable_if_t<!reflector::is_reflect_class<std::remove_reference_t<T>>::value && (xmart::is_fundamention_type<typename std::remove_reference<T>::type>::value || xmart::is_date_type<typename std::remove_reference<T>::type>::value)> to_json_v(T&& obj, std::string const& name, nlohmann::json& json)
+		static typename std::enable_if<!reflector::is_reflect_class<typename std::remove_reference<T>::type>::value && (xmart::is_fundamention_type<typename std::remove_reference<T>::type>::value || xmart::is_date_type<typename std::remove_reference<T>::type>::value)>::type to_json_v(T&& obj, std::string const& name, nlohmann::json& json)
 		{
 			if (!obj.is_null()) {
 				json[name] = obj.value();
@@ -52,32 +81,34 @@ namespace xmart {
 		}
 #else
 		template<typename T>
-		static std::enable_if_t<!reflector::is_reflect_class<std::remove_reference_t<T>>::value> to_json_v(T&& obj, std::string const& name, nlohmann::json& json)
+		static typename std::enable_if<!reflector::is_reflect_class<typename std::remove_reference<T>::type>::value>::type to_json_v(T&& obj, std::string const& name, nlohmann::json& json)
 		{
 			json[name] = obj;
 		}
 #endif
-		template<typename T, typename U = std::enable_if_t<reflector::is_reflect_class<std::remove_reference_t<T>>::value>>
+		template<typename T, typename U = typename std::enable_if<reflector::is_reflect_class<typename std::remove_reference<T>::type>::value>::type>
 		static void to_json(T && obj, nlohmann::json & json)
 		{
-			reflector::each_object(std::forward<T>(obj), [&json](auto& t, auto& name, auto offset) {
-				to_json_v((t.*offset), name, json);
-			});
+			each_auto_params_lambda_to_json_v<serialize_> lambda{ json };
+			reflector::each_object(std::forward<T>(obj),lambda);
+			//reflector::each_object(std::forward<T>(obj), [&json](auto& t, auto& name, auto offset) {
+			//	to_json_v((t.*offset), name, json);
+			//});
 		}
 		template<typename T, typename U>
-		static std::enable_if_t<reflector::is_reflect_class<std::remove_reference_t<T>>::value> to_object_v(T& t, U&& v)
+		static typename std::enable_if<reflector::is_reflect_class<typename std::remove_reference<T>::type>::value>::type to_object_v(T& t, U&& v)
 		{
 			to_object(t, std::forward<U>(v));
 		}
 #ifdef _ENABLE_XORM_
 		template<typename T, typename U>
-		static std::enable_if_t<!reflector::is_reflect_class<typename std::remove_reference<T>::type>::value && (!xmart::is_fundamention_type<typename std::remove_reference<T>::type>::value && !xmart::is_date_type<typename std::remove_reference<T>::type>::value)> to_object_v(T& t, U&& v)
+		static typename std::enable_if<!reflector::is_reflect_class<typename std::remove_reference<T>::type>::value && (!xmart::is_fundamention_type<typename std::remove_reference<T>::type>::value && !xmart::is_date_type<typename std::remove_reference<T>::type>::value)>::type to_object_v(T& t, U&& v)
 		{
 			t = v.template get<T>();
 		}
 
 		template<typename T, typename U>
-		static std::enable_if_t<!reflector::is_reflect_class<typename std::remove_reference<T>::type>::value&& xmart::is_fundamention_type<typename std::remove_reference<T>::type>::value && !xmart::is_date_type<typename std::remove_reference<T>::type>::value> to_object_v(T& t, U&& v)
+		static typename std::enable_if<!reflector::is_reflect_class<typename std::remove_reference<T>::type>::value&& xmart::is_fundamention_type<typename std::remove_reference<T>::type>::value && !xmart::is_date_type<typename std::remove_reference<T>::type>::value>::type to_object_v(T& t, U&& v)
 		{
 			if (!v.is_null()) {
 				t = v.template get<typename T::value_type>();
@@ -88,7 +119,7 @@ namespace xmart {
 		}
 
 		template<typename T, typename U>
-		static std::enable_if_t<!reflector::is_reflect_class<typename std::remove_reference<T>::type>::value && !xmart::is_fundamention_type<typename std::remove_reference<T>::type>::value&& xmart::is_date_type<typename std::remove_reference<T>::type>::value> to_object_v(T& t, U&& v)
+		static typename std::enable_if<!reflector::is_reflect_class<typename std::remove_reference<T>::type>::value && !xmart::is_fundamention_type<typename std::remove_reference<T>::type>::value&& xmart::is_date_type<typename std::remove_reference<T>::type>::value>::type to_object_v(T& t, U&& v)
 		{
 			if (!v.is_null()) {
 				t = v.template get<std::string>();
@@ -99,18 +130,20 @@ namespace xmart {
 		}
 #else
 		template<typename T, typename U>
-		static std::enable_if_t<!reflector::is_reflect_class<std::remove_reference_t<T>>::value> to_object_v(T& t, U&& v)
+		static typename std::enable_if<!reflector::is_reflect_class<typename std::remove_reference<T>::type>::value>::type to_object_v(T& t, U&& v)
 		{
 			t = v.template get<T>();
 		}
 #endif
 
-		template<typename T, typename U = std::enable_if_t<reflector::is_reflect_class<typename std::remove_reference<T>::type>::value>>
+		template<typename T, typename U = typename std::enable_if<reflector::is_reflect_class<typename std::remove_reference<T>::type>::value>::type>
 		static void to_object(T && t, nlohmann::json const& json)
 		{
-			reflector::each_object(std::forward<T>(t), [&json](auto& t, auto& name, auto offset) {
-				to_object_v((t.*offset), json[name]);
-			});
+			each_auto_params_lambda_to_object_v<serialize_> lambda{ json };
+			reflector::each_object(std::forward<T>(t), lambda);
+			//reflector::each_object(std::forward<T>(t), [&json](auto& t, auto& name, auto offset) {
+			//	to_object_v((t.*offset), json[name]);
+			//});
 		}
 	};
 	namespace serializer {
