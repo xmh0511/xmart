@@ -9,6 +9,6 @@
     "db_pass": "root",
     "db_reconnumber": 1,
     "db_timeout": -1,
-    "db_conn_number": 2,
+    "db_conn_number": 10,
     "db_character_encoding": "utf8"
 }

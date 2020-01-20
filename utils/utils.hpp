@@ -5,31 +5,6 @@ namespace xmart {
 	using namespace xfinal;
 }
 namespace xmart {
-	template<typename Request>
-	struct auto_params_lambda_map_from_params {
-		auto_params_lambda_map_from_params(Request& req_):req(req_){
-
-		}
-		template<typename T,typename U,typename Y>
-		void operator()(T&& obj,U&& name,Y&& field) {
-			(obj.*field) = mapping_query_value<typename std::remove_reference<decltype(obj.*field)>::type>(req.param(name));
-		}
-	private:
-		Request& req;
-	};
-
-	template<typename Request>
-	struct auto_params_lambda_map_from_query {
-		auto_params_lambda_map_from_query(Request& req_):req(req_) {
-
-		}
-		template<typename T, typename U, typename Y>
-		void operator()(T&& obj, U&& name, Y&& field) {
-			(obj.*field) = mapping_query_value<typename std::remove_reference<decltype(obj.*field)>::type>(req.query(name));
-		}
-	private:
-		Request& req;
-	};
 	template<typename T>
 	typename std::enable_if<std::is_same<int, T>::value || std::is_same<short, T>::value, T>::type str_to_fundamention(nonstd::string_view str) {
 		return std::atoi(str.data());
@@ -68,6 +43,32 @@ namespace xmart {
 
 
 #endif
+
+	template<typename Request>
+	struct auto_params_lambda_map_from_params {
+		auto_params_lambda_map_from_params(Request& req_) :req(req_) {
+
+		}
+		template<typename T, typename U, typename Y>
+		void operator()(T&& obj, U&& name, Y&& field) {
+			(obj.*field) = mapping_query_value<typename std::remove_reference<decltype(obj.*field)>::type>(req.param(name));
+		}
+	private:
+		Request& req;
+	};
+
+	template<typename Request>
+	struct auto_params_lambda_map_from_query {
+		auto_params_lambda_map_from_query(Request& req_) :req(req_) {
+
+		}
+		template<typename T, typename U, typename Y>
+		void operator()(T&& obj, U&& name, Y&& field) {
+			(obj.*field) = mapping_query_value<typename std::remove_reference<decltype(obj.*field)>::type>(req.query(name));
+		}
+	private:
+		Request& req;
+	};
 
 	template<typename T, typename Request>
 	typename std::enable_if<reflector::is_reflect_class<T>::value, T>::type map_from_query(Request& req) {
