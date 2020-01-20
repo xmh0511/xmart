@@ -2,6 +2,7 @@
 #include <xorm/reflect/reflector.hpp>
 #ifdef _ENABLE_XORM_
 #include <xorm/xorm.hpp>
+#include <xfinal/json.hpp>
 namespace xmart {
 	using namespace xorm;
 }

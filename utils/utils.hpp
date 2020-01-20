@@ -1,5 +1,5 @@
 #pragma once
-#include <xfinal/xfinal.hpp>
+#include <xfinal/string_view.hpp>
 #include "serialize.hpp"
 namespace xmart {
 	using namespace xfinal;

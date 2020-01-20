@@ -1,4 +1,5 @@
 #pragma once
+#include <xfinal/xfinal.hpp>
 #include "utils/utils.hpp"
 namespace xmart {
 	inline http_server& init_xmart(std::string const& configPath, bool& r) {
