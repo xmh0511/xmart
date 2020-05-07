@@ -14,10 +14,8 @@ REFLECTION(test, id, a, b, time, date, tm, money)
 
 int main() {
 	bool r = false;
-	http_server& server = init_xmart("./config.json", r);
-
-	server.on_error([](std::string const& ec) {
-		std::cout << ec << std::endl;
+	http_server& server = init_xmart("./config.json", r, [](std::string const& message) {
+		std::cout << std::to_string(std::time(nullptr)) << " : " << message << "\n";
 	});
 
 	if (!r) {

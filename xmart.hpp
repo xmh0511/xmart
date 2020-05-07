@@ -2,23 +2,37 @@
 #include <xfinal/xfinal.hpp>
 #include "utils/utils.hpp"
 namespace xmart {
-	inline http_server& init_xmart(std::string const& configPath, bool& r) {
-		bool orm_result = true;
-		bool config_result = true;
+	inline http_server& init_xmart(std::string const& configPath, bool& r, std::function<void(std::string const&)> error_cb = nullptr) {
+		static std::unique_ptr<http_server> server_;
 		json config_json;
 		std::ifstream file(configPath);
 		std::stringstream ss;
 		ss << file.rdbuf();
 		auto config_str = ss.str();
 		if (config_str.empty()) {
-#ifdef _ENABLE_XORM_
-			orm_result = false;
-#endif 
-			config_result = false;
+			r = false;
+			return *server_;
 		}
 		else {
 			try {
 				config_json = json::parse(config_str);
+				std::size_t thread_count = std::thread::hardware_concurrency();
+				auto number = config_json.at("http_thread").get<std::size_t>();
+				if (number > 0) {
+					thread_count = number;
+				}
+				server_ = std::unique_ptr<http_server>(new http_server(thread_count));
+				if (error_cb == nullptr) {
+					server_->on_error([](std::string const& message) {
+						std::cout << message << "\n";
+						});
+				}
+				else {
+					server_->on_error(std::move(error_cb));
+				}
+				auto port = config_json.at("http_port").get<std::string>();
+				auto host = config_json.at("http_host").get<std::string>();
+				server_->listen(host, port);
 #ifdef _ENABLE_XORM_
 				dataBaseConfig config{};
 				config.character_encoding = config_json.at("db_character_encoding").get<std::string>();
@@ -31,42 +45,24 @@ namespace xmart {
 				config.timeout = config_json.at("db_timeout").get<int>();
 				config.user = config_json.at("db_user").get<std::string>();
 				init_database_config(config);
-				orm_result = true;
+				auto server_ptr = server_.get();
+				dao_message::get().set_error_callback([server_ptr](std::string const& message) {
+					server_ptr->trigger_error(message);
+				});
 #ifdef  XMART_ENABLE_MYSQL
 				auto& pool = dao_t<xorm::mysql>::get_conn_pool();
 #endif 
 #endif 
+				r = true;
 			}
 			catch (std::exception const& ec) {
-				std::cout << ec.what() << std::endl;
-#ifdef _ENABLE_XORM_
-				orm_result = false;
-#endif 
+				std::cout << ec.what() << "\n";
+				r = false;
+				return *server_;
 			}
+			return *server_;
 		}
-		std::size_t thread_count = std::thread::hardware_concurrency();
-		if (config_result) {
-			auto number = config_json.at("http_thread").get<std::size_t>();
-			if (number > 0) {
-				thread_count = number;
-			}
-		}
-		static http_server server(thread_count);
-		if (config_result) {
-			auto port = config_json.at("http_port").get<std::string>();
-			auto host = config_json.at("http_host").get<std::string>();
-			server.listen(host, port);
-		}
-		r = config_result && orm_result;
-#ifdef _ENABLE_XORM_
-		if (r) {
-			dao_message::get().set_error_callback([](std::string const& message) {
-				server.trigger_error(message);
-			});
-		}
-#endif // #ifdef _ENABLE_XORM_
 
-		return server;
 	}
 
 }
