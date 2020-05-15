@@ -49,9 +49,12 @@ namespace xmart {
 				dao_message::get().set_error_callback([server_ptr](std::string const& message) {
 					server_ptr->trigger_error(message);
 				});
-#ifdef  XMART_ENABLE_MYSQL
+#ifdef  XORM_ENABLE_MYSQL
 				auto& pool = dao_t<xorm::mysql>::get_conn_pool();
 #endif 
+#ifdef  XORM_ENABLE_SQLITE
+				auto& pool = dao_t<xorm::sqlite>::get_conn_pool();
+#endif
 #endif 
 				r = true;
 			}
