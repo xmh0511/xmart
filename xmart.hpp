@@ -33,6 +33,12 @@ namespace xmart {
 				auto port = config_json.at("http_port").get<std::string>();
 				auto host = config_json.at("http_host").get<std::string>();
 				server_->listen(host, port);
+				auto read_timeout = config_json.at("http_read_timeout").get<int>();
+				auto write_timeout = config_json.at("http_write_timeout").get<int>();
+				auto keepalive_timeout = config_json.at("http_keepalive_timeout").get<int>();
+				server_->set_wait_read_time((std::time_t)read_timeout);
+				server_->set_wait_write_time((std::time_t)write_timeout);
+				server_->set_keep_alive_wait_time(keepalive_timeout);
 #ifdef _ENABLE_XORM_
 				dataBaseConfig config{};
 				config.character_encoding = config_json.at("db_character_encoding").get<std::string>();
