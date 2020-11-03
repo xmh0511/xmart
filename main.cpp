@@ -9,8 +9,9 @@ struct test {
 	mysql::MysqlDate date;
 	mysql::MysqlTime tm;
 	mysql::Double money;
+	std::string d;
 };
-REFLECTION(test, id, a, b, time, date, tm, money)
+REFLECTION(test, id, a, b, time, date, tm, money,d)
 
 int main() {
 	bool r = false;
@@ -25,14 +26,14 @@ int main() {
 
 	server.router<GET, POST>("/write", [](request& req, response& res) {
 		auto data = map_from_query<test>(req);
-		dao_t<mysql> dao;
+		dao_t<mysql> dao{"xorm"};
 		dao.insert(data);
 		res.write_string("form insert");
 	});
 
 	server.router<GET, POST>("/writeparams", [](request& req, response& res) {
 		auto data = map_from_params<test>(req);
-		dao_t<mysql> dao;
+		dao_t<mysql> dao{ "xorm" };
 		dao.insert(data);
 		res.write_string("params insert");
 	});
@@ -42,7 +43,7 @@ int main() {
 		auto json = json::parse(json_str);
 		try {
 			auto data = map_from_json<test>(json);
-			dao_t<mysql> dao;
+			dao_t<mysql> dao{ "xorm" };
 			dao.insert(data);
 		}
 		catch (std::exception const& ec) {
@@ -52,11 +53,11 @@ int main() {
 	});
 
 	server.router<GET>("/list", [](request& req, response& res) {
-		dao_t<mysql> dao;
+		dao_t<mysql> dao{ "xorm" };
 		auto pr = dao.query<test>("where 1=1");
 		json root;
-		if (pr.first) {
-			auto& vec = pr.second;
+		if (pr.success) {
+			auto& vec = pr.results;
 			root["list"] = list_to_json(vec);
 		}
 		root["success"] = true;

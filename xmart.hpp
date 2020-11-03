@@ -40,27 +40,30 @@ namespace xmart {
 				server_->set_wait_write_time((std::time_t)write_timeout);
 				server_->set_keep_alive_wait_time(keepalive_timeout);
 #ifdef _ENABLE_XORM_
-				dataBaseConfig config{};
-				config.character_encoding = config_json.at("db_character_encoding").get<std::string>();
-				config.conn_number = config_json.at("db_conn_number").get<std::size_t>();
-				config.dbname = config_json.at("db_name").get<std::string>();
-				config.host = config_json.at("db_host").get<std::string>();
-				config.password = config_json.at("db_pass").get<std::string>();
-				config.port = config_json.at("db_port").get<unsigned int>();
-				config.reconnect_number = config_json.at("db_reconnumber").get<std::size_t>();
-				config.timeout = config_json.at("db_timeout").get<int>();
-				config.user = config_json.at("db_user").get<std::string>();
-				init_database_config(config);
 				auto server_ptr = server_.get();
 				dao_message::get().set_error_callback([server_ptr](std::string const& message) {
 					server_ptr->trigger_error(message);
 				});
+				auto db_configs = config_json.at("db_configs");
+				for (auto&& iter : db_configs) {
+					dataBaseConfig config{};
+					config.index_key = iter.at("db_index_key").get<std::string>();
+					config.character_encoding = iter.at("db_character_encoding").get<std::string>();
+					config.conn_number = iter.at("db_conn_number").get<std::size_t>();
+					config.dbname = iter.at("db_name").get<std::string>();
+					config.host = iter.at("db_host").get<std::string>();
+					config.password = iter.at("db_pass").get<std::string>();
+					config.port = iter.at("db_port").get<unsigned int>();
+					config.reconnect_number = iter.at("db_reconnumber").get<std::size_t>();
+					config.timeout = iter.at("db_timeout").get<int>();
+					config.user = iter.at("db_user").get<std::string>();
 #ifdef  XORM_ENABLE_MYSQL
-				auto& pool = dao_t<xorm::mysql>::get_conn_pool();
+					dao_t<xorm::mysql>::init_conn_pool(config);
 #endif 
 #ifdef  XORM_ENABLE_SQLITE
-				auto& pool = dao_t<xorm::sqlite>::get_conn_pool();
+					dao_t<xorm::sqlite>::init_conn_pool(config);
 #endif
+				}
 #endif 
 				r = true;
 			}

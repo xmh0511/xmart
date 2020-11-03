@@ -5,13 +5,18 @@
 	"http_read_timeout":30,
 	"http_write_timeout":30,
 	"http_keepalive_timeout":10,
-    "db_host": "127.0.0.1",
-    "db_port": 3306,
-    "db_name": "xorm",
-    "db_user": "root",
-    "db_pass": "root",
-    "db_reconnumber": 1,
-    "db_timeout": -1,
-    "db_conn_number": 10,
-    "db_character_encoding": "utf8"
+	"db_configs":[
+	  {
+	        "db_index_key":"xorm",
+	        "db_host": "127.0.0.1",
+			"db_port": 3306,
+			"db_name": "xorm",
+			"db_user": "root",
+			"db_pass": "root22",
+			"db_reconnumber": 1,
+			"db_timeout": -1,
+			"db_conn_number": 2,
+			"db_character_encoding": "utf8"
+	  }
+	]
 }
