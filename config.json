@@ -12,7 +12,7 @@
 			"db_port": 3306,
 			"db_name": "xorm",
 			"db_user": "root",
-			"db_pass": "root22",
+			"db_pass": "root",
 			"db_reconnumber": 1,
 			"db_timeout": -1,
 			"db_conn_number": 2,
