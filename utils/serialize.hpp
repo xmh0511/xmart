@@ -38,7 +38,9 @@ namespace xmart {
 		}
 		template<typename T, typename U, typename Y>
 		void operator()(T&& t, U&& name, Y&& offset) {
-			Class::to_object_v((t.*offset), json[name]);
+			if (json.find(name) != json.end()) {
+				Class::to_object_v((t.*offset), json[name]);
+			}
 		}
 	private:
 		nlohmann::json const& json;
