@@ -2,8 +2,8 @@
 #include <xfinal/xfinal.hpp>
 #include "utils/utils.hpp"
 namespace xmart {
-	inline http_server& init_xmart(std::string const& configPath, bool& r, std::function<void(std::string const&)> error_cb = nullptr) {
-		static std::unique_ptr<http_server> server_;
+	inline std::unique_ptr<http_server> init_xmart(std::string const& configPath, bool& r, std::function<void(std::string const&)> error_cb = nullptr) {
+		std::unique_ptr<http_server> server_;
 		json config_json;
 		std::ifstream file(configPath);
 		std::stringstream ss;
@@ -11,7 +11,7 @@ namespace xmart {
 		auto config_str = ss.str();
 		if (config_str.empty()) {
 			r = false;
-			return *server_;
+			return server_;
 		}
 		else {
 			try {
@@ -70,9 +70,9 @@ namespace xmart {
 			catch (std::exception const& ec) {
 				std::cout << ec.what() << "\n";
 				r = false;
-				return *server_;
+				return server_;
 			}
-			return *server_;
+			return server_;
 		}
 
 	}

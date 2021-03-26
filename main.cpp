@@ -15,9 +15,11 @@ REFLECTION(test, id, a, b, time, date, tm, money,d)
 
 int main() {
 	bool r = false;
-	http_server& server = init_xmart("./config.json", r, [](std::string const& message) {
+	auto server_ptr = init_xmart("./config.json", r, [](std::string const& message) {
 		std::cout << std::to_string(std::time(nullptr)) << " : " << message << "\n";
 	});
+
+	auto&& server = *server_ptr;
 
 	if (!r) {
 		std::cout<<"config has some error"<<std::endl;
