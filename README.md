@@ -10,6 +10,10 @@
 3. 易于使用的orm库 (xorm) [基本使用](https://github.com/xmh0511/xorm)    
 4. 完整的处理工具  (utils)  
 
+
+### 移植程序
+ldd 程序名 | awk '{print $3}' | xargs -i cp -L {} 依赖保存路径
+
 ## 演示
 
 ````
