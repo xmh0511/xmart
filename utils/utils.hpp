@@ -28,7 +28,7 @@ namespace xmart {
 
 	template<typename T>
 	typename std::enable_if<xorm::is_fundamention_type<T>::value&& std::is_same<typename T::value_type, char>::value, typename T::value_type>::type mapping_query_value(nonstd::string_view str) {
-		return char{ std::atoi(str.data()) };
+		return char(std::atoi(str.data()) );
 	}
 
 	template<typename T>
