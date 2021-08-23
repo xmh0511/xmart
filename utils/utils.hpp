@@ -100,7 +100,7 @@ namespace xmart {
 
 	template<typename T>
 	typename std::enable_if<reflector::is_reflect_class<typename std::remove_reference<T>::type>::value, nlohmann::json>::type list_to_json(std::vector<T>& vec) {
-		json list;
+		nlohmann::json list;
 		for (auto& iter : vec) {
 			auto node = map_to_json(iter);
 			list.push_back(node);
@@ -110,7 +110,7 @@ namespace xmart {
 
 	template<typename T>
 	typename std::enable_if<reflector::is_reflect_class<typename std::remove_reference<T>::type>::value, nlohmann::json>::type list_to_json(std::vector<T>&& vec) {
-		json list;
+		nlohmann::json list;
 		for (auto& iter : vec) {
 			auto node = map_to_json(iter);
 			list.push_back(node);
