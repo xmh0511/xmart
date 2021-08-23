@@ -2,9 +2,6 @@
 #include <xfinal/string_view.hpp>
 #include "serialize.hpp"
 namespace xmart {
-	using namespace xfinal;
-}
-namespace xmart {
 	template<typename T>
 	typename std::enable_if<std::is_same<int, T>::value || std::is_same<short, T>::value, T>::type str_to_fundamention(nonstd::string_view str) {
 		return std::atoi(str.data());

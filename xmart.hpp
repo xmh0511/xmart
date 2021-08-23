@@ -2,6 +2,7 @@
 #include <xfinal/xfinal.hpp>
 #include "utils/utils.hpp"
 namespace xmart {
+	using namespace xfinal;
 	inline std::unique_ptr<http_server> init_xmart(std::string const& configPath, bool& r, std::function<void(std::string const&)> error_cb = nullptr) {
 		std::unique_ptr<http_server> server_;
 		json config_json;
